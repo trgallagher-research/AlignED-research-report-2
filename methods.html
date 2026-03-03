@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Methods — AlignED Report 2</title>
+  <meta name="description" content="Two models, two corpora, three assessment dimensions, and two contamination tests.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="methods">
+  <!-- Navigation -->
+  <header>
+    <div class="container">
+      <a href="index.html" class="logo">AlignED</a>
+      <button class="nav-toggle" aria-label="Toggle navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <nav>
+        <a href="index.html">Abstract</a>
+        <a href="introduction.html">1. Introduction</a>
+        <a href="methods.html" class="active">2. Methods</a>
+        <a href="results.html">3. Results</a>
+        <a href="discussion.html">4. Discussion</a>
+        <a href="appendices.html">Appendices</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-header">
+      <div class="container">
+        <h1>2. Methods</h1>
+        <p class="subtitle">Design, materials, and procedures</p>
+      </div>
+    </div>
+
+    <section>
+      <div class="container">
+        <div class="prose">
+
+          <!-- Jump Links -->
+          <div class="jump-links">
+            <h3>On this page</h3>
+            <ul>
+              <li><a href="#overview">Overview</a></li>
+              <li><a href="#models">Models</a></li>
+              <li><a href="#corpora">Essay corpora</a></li>
+              <li><a href="#prompts">Assessment prompts</a></li>
+              <li><a href="#contamination">Contamination tests</a></li>
+              <li><a href="#metrics">Scoring and analysis</a></li>
+            </ul>
+          </div>
+
+          <h2 id="overview">Overview</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Dimension</th>
+                <th>Detail</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Models</td><td>Gemini 3.1 Pro, Gemini 3 Flash</td></tr>
+              <tr><td>Essay corpora</td><td>ETS GRE samples (6 essays), PERSUADE 2.0 (12 essays)</td></tr>
+              <tr><td>Assessment dimensions</td><td>Scoring (holistic score + justification), Feedback (strengths + areas for improvement), Next step (targeted learning task)</td></tr>
+              <tr><td>Contamination tests</td><td>Verbatim recall (text reproduction), Score recall (score guessing without rubric)</td></tr>
+              <tr><td>Temperature</td><td>0 (deterministic)</td></tr>
+              <tr><td>Output format</td><td>Structured JSON</td></tr>
+            </tbody>
+          </table>
+
+          <h2 id="models">Models</h2>
+          <p>We tested two Gemini models from Google:</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Model ID</th>
+                <th>Tier</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Gemini 3.1 Pro</td><td>gemini-3.1-pro-preview</td><td>Frontier</td></tr>
+              <tr><td>Gemini 3 Flash</td><td>gemini-3-flash-preview</td><td>Lightweight</td></tr>
+            </tbody>
+          </table>
+          <p>Only two models were tested. This is a proof-of-concept, not a comprehensive benchmark. We chose Gemini models because the google-genai SDK supports structured JSON output, which reduced the need for output parsing. Extending this approach to other model families (Claude, GPT, open-weight models) is a natural next step.</p>
+
+          <h2 id="corpora">Essay corpora</h2>
+          <h3>ETS GRE sample essays (high contamination risk)</h3>
+          <p>Six essays from the ETS "Analyse an Argument" task, one at each score level (1 through 6). These essays are published on the ETS website with scores and detailed rater commentary. They appear widely in GRE preparation materials and are almost certainly present in the training data of any model trained on web-scale corpora.</p>
+          <p>All six essays respond to the same argument prompt about Mason City's riverside recreational facilities. ETS provides one sample response at each score level with official rater commentary.</p>
+
+          <h3>PERSUADE 2.0 essays (lower contamination risk)</h3>
+          <p>Twelve essays from the PERSUADE 2.0 corpus (Crossley et al., 2024), two at each score level (1 through 6). PERSUADE 2.0 is a research dataset of student persuasive writing, published for automated essay scoring research. While the corpus is publicly available, its essays are less likely to appear in general web training data than the widely-reproduced ETS samples.</p>
+          <p>The PERSUADE essays respond to a different prompt ("Seeking multiple opinions") and were scored by human raters on a compatible 6-point holistic scale.</p>
+
+          <div class="note">
+            <strong>Corpus comparability.</strong> The ETS and PERSUADE corpora differ in prompt, genre, student population, and rubric origin. These differences mean that scoring accuracy cannot be directly compared across corpora. The contamination comparison relies on the <em>score recall</em> test (which does not involve the rubric) rather than on raw accuracy differences.
+          </div>
+
+          <h2 id="prompts">Assessment prompts</h2>
+          <p>Each essay was assessed using three separate prompts, run sequentially. Separating prompts prevents the score from anchoring the feedback.</p>
+
+          <details>
+            <summary>Prompt 1: Scoring</summary>
+            <div class="details-content">
+              <p>The model receives the essay, the argument prompt, the task instruction, and the full 6-point rubric. It returns a holistic score (1-6) and a justification referencing specific rubric criteria.</p>
+              <pre>You are an expert writing assessor. Score the following student essay using the provided rubric.
+
+Return your response as JSON with two fields:
+- "score": an integer from 1 to 6
+- "justification": a 2-3 sentence explanation referencing specific rubric criteria
+
+[Rubric and essay text provided]</pre>
+            </div>
+          </details>
+
+          <details>
+            <summary>Prompt 2: Feedback</summary>
+            <div class="details-content">
+              <p>The model receives the essay and prompt (but not the score it previously assigned). It returns three specific strengths and three areas for improvement, each with concrete textual references.</p>
+              <pre>You are an expert writing tutor providing formative feedback to a student.
+
+Identify exactly 3 specific strengths and 3 specific areas for improvement.
+Each point must reference specific parts of the student's text.
+
+Return as JSON with "strengths" (array of 3 strings) and "areas_for_improvement" (array of 3 strings).
+
+[Essay text provided]</pre>
+            </div>
+          </details>
+
+          <details>
+            <summary>Prompt 3: Next step</summary>
+            <div class="details-content">
+              <p>The model receives the essay and prompt. It returns a single, concrete learning task targeting the student's most pressing skill gap.</p>
+              <pre>You are an expert writing tutor. Based on this student's essay, design one specific, actionable learning task.
+
+Return as JSON with:
+- "task_title": short name for the activity
+- "task_description": 2-3 sentence description of what the student should do
+- "target_skill": the specific writing skill this task develops
+
+[Essay text provided]</pre>
+            </div>
+          </details>
+
+          <h2 id="contamination">Contamination tests</h2>
+          <h3>Verbatim recall test</h3>
+          <p>Each model was given the first sentence of each ETS essay and asked to continue it. The model's continuation was compared to the original text using cosine similarity. If the model had memorised the essay text, it would produce a high-similarity continuation.</p>
+
+          <h3>Score recall test</h3>
+          <p>Each model was given an essay and asked to guess the published score <em>without seeing the rubric</em>. The prompt asked: "What score do you think this essay received?" This tests whether the model has memorised the score-essay association from training data.</p>
+          <p>The score recall test was run on both corpora. If a model recalls ETS scores at a higher rate than PERSUADE scores, this is consistent with contamination: the ETS essays (with their published scores) are more likely to be in training data.</p>
+
+          <h2 id="metrics">Scoring and analysis</h2>
+          <p>Assessment accuracy was measured using:</p>
+          <ul>
+            <li><strong>Exact match:</strong> Model score equals human/ETS score.</li>
+            <li><strong>Within-one:</strong> Model score is within 1 point of human/ETS score. Standard in essay scoring research, where adjacent scores are considered acceptable agreement.</li>
+          </ul>
+          <p>Contamination was measured by comparing score recall rates across corpora. The <strong>contamination gap</strong> is the difference in exact score recall between ETS and PERSUADE essays, measured in percentage points.</p>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <a href="index.html" class="logo" style="color: white;">AlignED</a>
+          <p>Benchmarking AI models for educational practice.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Report</h4>
+          <ul>
+            <li><a href="introduction.html">Introduction</a></li>
+            <li><a href="methods.html">Methods</a></li>
+            <li><a href="results.html">Results</a></li>
+            <li><a href="discussion.html">Discussion</a></li>
+            <li><a href="appendices.html">Appendices</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Links</h4>
+          <ul>
+            <li><a href="https://trgallagher-research.github.io/AlignED-research-reports/" target="_blank">All Reports</a></li>
+            <li><a href="https://github.com/trgallagher-research" target="_blank">GitHub</a></li>
+          </ul>
+        </div>
+      </div>
+      <p class="copyright">&copy; 2026 AlignED. Report 2.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
