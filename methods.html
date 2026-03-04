@@ -140,7 +140,7 @@
 
           <h2 id="contamination">Contamination tests</h2>
           <h3>Verbatim recall test (ETS only)</h3>
-          <p>Each model was given the first sentence of each ETS essay and asked to continue it. The model's continuation was compared to the original text using sequence similarity (Python's SequenceMatcher). Similarity scores above 0.5 would indicate substantial text memorisation.</p>
+          <p>Each model was given the first sentence of each ETS essay and asked to continue it. The model's continuation was compared to the original text using Python's SequenceMatcher, which calculates a ratio between 0 and 1 based on the longest contiguous matching subsequences between two texts. A score of 1.0 means the texts are identical; a score of 0 means they share no common substrings. We set 0.5 as the threshold for substantial text memorisation. Scores below 0.5 indicate the model produced substantially different text from the original.</p>
 
           <h3>Score recall test (both corpora)</h3>
           <p>Each model was given an essay and asked to guess the published score <em>without seeing the rubric</em>. This tests whether the model has memorised the score-essay association from training data.</p>
