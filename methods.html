@@ -67,6 +67,7 @@
             <tbody>
               <tr><td>Models</td><td>Gemini 3.1 Pro, Gemini 3 Flash</td></tr>
               <tr><td>Essay corpora</td><td>ETS GRE samples (6 essays), PERSUADE 2.0 (12 essays)</td></tr>
+              <tr><td>Rubrics</td><td>ETS GRE 6-point holistic (for ETS essays), PERSUADE/ASAP 6-point holistic (for PERSUADE essays)</td></tr>
               <tr><td>Assessment dimensions</td><td>Scoring (holistic score + justification), Feedback (strengths + areas for improvement), Next step (targeted learning task)</td></tr>
               <tr><td>Contamination tests</td><td>Verbatim recall (text reproduction), Score recall (score guessing without rubric)</td></tr>
               <tr><td>Temperature</td><td>0 (deterministic)</td></tr>
@@ -89,7 +90,7 @@
               <tr><td>Gemini 3 Flash</td><td>gemini-3-flash-preview</td><td>Lightweight</td></tr>
             </tbody>
           </table>
-          <p>Only two models were tested. This is a proof-of-concept, not a comprehensive benchmark. We chose Gemini models because the google-genai SDK supports structured JSON output, which reduced the need for output parsing. Extending this approach to other model families (Claude, GPT, open-weight models) is a natural next step.</p>
+          <p>Only two models were tested. We chose Gemini models because the google-genai SDK supports structured JSON output, which reduced the need for output parsing. Extending this approach to other model families (Claude, GPT, open-weight models) is a natural next step.</p>
 
           <h2 id="corpora">Essay corpora</h2>
           <h3>ETS GRE sample essays (high contamination risk)</h3>
@@ -98,26 +99,24 @@
 
           <h3>PERSUADE 2.0 essays (lower contamination risk)</h3>
           <p>Twelve essays from the PERSUADE 2.0 corpus (Crossley et al., 2024), two at each score level (1 through 6). PERSUADE 2.0 is a research dataset of student persuasive writing, published for automated essay scoring research. While the corpus is publicly available, its essays are less likely to appear in general web training data than the widely-reproduced ETS samples.</p>
-          <p>The PERSUADE essays respond to a different prompt ("Seeking multiple opinions") and were scored by human raters on a compatible 6-point holistic scale.</p>
+          <p>The PERSUADE essays respond to a different prompt ("Seeking multiple opinions") and were scored by trained human raters on the PERSUADE/ASAP 6-point holistic scale.</p>
+
+          <h3>Rubrics</h3>
+          <p>Each corpus was scored using its own rubric. The ETS essays were scored against the ETS GRE "Analyse an Argument" rubric, which emphasises identification and examination of assumptions, logical organisation, and language control. The PERSUADE essays were scored against the PERSUADE/ASAP holistic rubric, which emphasises development of a point of view, critical thinking, use of evidence, and persuasive writing conventions. Both rubrics use a 6-point scale, but the criteria differ to match the genre and task. Full rubric text for both scales is in the <a href="appendices.html#rubric">Appendices</a>.</p>
 
           <div class="note">
-            <strong>Corpus comparability.</strong> The ETS and PERSUADE corpora differ in prompt, genre, student population, and rubric origin. These differences mean that scoring accuracy cannot be directly compared across corpora. The contamination comparison relies on the <em>score recall</em> test (which does not involve the rubric) rather than on raw accuracy differences.
+            <strong>Corpus comparability.</strong> The two corpora differ in prompt, genre, student population, and rubric. Scoring accuracy cannot be directly compared across corpora because the rubrics assess different writing competencies. The contamination comparison relies on the <em>score recall</em> test (which does not involve the rubric at all) rather than on raw accuracy differences.
           </div>
 
           <h2 id="prompts">Assessment prompts</h2>
-          <p>Each essay was assessed using three separate prompts, run sequentially. Separating prompts prevents the score from anchoring the feedback.</p>
+          <p>Each essay was assessed using three separate prompts, run sequentially. Separating prompts prevents the score from anchoring the feedback. The prompt structure was identical for both corpora, but the rubric and task framing were adapted to match each corpus. Full prompt text is in the <a href="appendices.html#prompts">Appendices</a>.</p>
 
           <details>
             <summary>Prompt 1: Scoring</summary>
             <div class="details-content">
-              <p>The model receives the essay, the argument prompt, the task instruction, and the full 6-point rubric. It returns a holistic score (1-6) and a justification referencing specific rubric criteria.</p>
-              <pre>You are an expert writing assessor. Score the following student essay using the provided rubric.
-
-Return your response as JSON with two fields:
-- "score": an integer from 1 to 6
-- "justification": a 2-3 sentence explanation referencing specific rubric criteria
-
-[Rubric and essay text provided]</pre>
+              <p>The model receives the essay, the writing prompt, and the full 6-point rubric for the relevant corpus. It returns a holistic score (1-6) and a justification referencing specific rubric criteria.</p>
+              <p><strong>ETS version:</strong> Framed as a GRE "Analyse an Argument" task. Includes the ETS rubric and the argument prompt.</p>
+              <p><strong>PERSUADE version:</strong> Framed as a persuasive writing task. Includes the PERSUADE/ASAP rubric and the writing prompt.</p>
             </div>
           </details>
 
@@ -125,14 +124,8 @@ Return your response as JSON with two fields:
             <summary>Prompt 2: Feedback</summary>
             <div class="details-content">
               <p>The model receives the essay and prompt (but not the score it previously assigned). It returns three specific strengths and three areas for improvement, each with concrete textual references.</p>
-              <pre>You are an expert writing tutor providing formative feedback to a student.
-
-Identify exactly 3 specific strengths and 3 specific areas for improvement.
-Each point must reference specific parts of the student's text.
-
-Return as JSON with "strengths" (array of 3 strings) and "areas_for_improvement" (array of 3 strings).
-
-[Essay text provided]</pre>
+              <p><strong>ETS version:</strong> Asks for feedback on analytical reasoning.</p>
+              <p><strong>PERSUADE version:</strong> Asks for feedback on persuasive writing, calibrated to a middle/high school student audience.</p>
             </div>
           </details>
 
@@ -140,24 +133,19 @@ Return as JSON with "strengths" (array of 3 strings) and "areas_for_improvement"
             <summary>Prompt 3: Next step</summary>
             <div class="details-content">
               <p>The model receives the essay and prompt. It returns a single, concrete learning task targeting the student's most pressing skill gap.</p>
-              <pre>You are an expert writing tutor. Based on this student's essay, design one specific, actionable learning task.
-
-Return as JSON with:
-- "task_title": short name for the activity
-- "task_description": 2-3 sentence description of what the student should do
-- "target_skill": the specific writing skill this task develops
-
-[Essay text provided]</pre>
+              <p><strong>ETS version:</strong> Targets analytical writing weaknesses.</p>
+              <p><strong>PERSUADE version:</strong> Targets persuasive writing weaknesses, appropriately challenging for the student's level.</p>
             </div>
           </details>
 
           <h2 id="contamination">Contamination tests</h2>
-          <h3>Verbatim recall test</h3>
-          <p>Each model was given the first sentence of each ETS essay and asked to continue it. The model's continuation was compared to the original text using cosine similarity. If the model had memorised the essay text, it would produce a high-similarity continuation.</p>
+          <h3>Verbatim recall test (ETS only)</h3>
+          <p>Each model was given the first sentence of each ETS essay and asked to continue it. The model's continuation was compared to the original text using sequence similarity (Python's SequenceMatcher). Similarity scores above 0.5 would indicate substantial text memorisation.</p>
 
-          <h3>Score recall test</h3>
-          <p>Each model was given an essay and asked to guess the published score <em>without seeing the rubric</em>. The prompt asked: "What score do you think this essay received?" This tests whether the model has memorised the score-essay association from training data.</p>
-          <p>The score recall test was run on both corpora. If a model recalls ETS scores at a higher rate than PERSUADE scores, this is consistent with contamination: the ETS essays (with their published scores) are more likely to be in training data.</p>
+          <h3>Score recall test (both corpora)</h3>
+          <p>Each model was given an essay and asked to guess the published score <em>without seeing the rubric</em>. This tests whether the model has memorised the score-essay association from training data.</p>
+          <p>The score recall prompts were tailored to each corpus to avoid introducing framing confounds. The ETS prompt stated that the essay "was scored by ETS expert raters" and asked for the ETS-assigned score. The PERSUADE prompt stated that the essay came from "the PERSUADE 2.0 corpus" and "was scored by trained human raters on a 1-6 scale." Neither prompt included the rubric.</p>
+          <p>If a model recalls ETS scores at a higher rate than PERSUADE scores, this is consistent with contamination: the ETS essays (with their published scores) are more likely to be in training data.</p>
 
           <h2 id="metrics">Scoring and analysis</h2>
           <p>Assessment accuracy was measured using:</p>

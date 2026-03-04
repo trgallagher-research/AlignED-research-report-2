@@ -43,7 +43,7 @@
     <div class="container">
       <div class="abstract">
         <h2>Abstract</h2>
-        <p>Two Gemini models (3.1 Pro and 3 Flash) scored 18 student essays against the ETS GRE "Analyse an Argument" rubric. On 6 essays from the ETS sample set, both models achieved 67% exact score agreement with expert raters. On 12 essays from the PERSUADE 2.0 corpus, exact agreement dropped to 33% (Pro) and 42% (Flash). A contamination test reveals the source of the gap: when asked to recall scores without seeing the rubric, models matched ETS scores at 67% but PERSUADE scores at only 33-42%. The models did not memorise the essay text itself, but they did recall the published scores. This proof-of-concept suggests that assessment accuracy on well-known corpora may be inflated by score memorisation, and that contamination testing should be standard practice in AI assessment research.</p>
+        <p>Two Gemini models (3.1 Pro and 3 Flash) scored 18 student essays against rubrics matched to each corpus: the ETS GRE rubric for 6 ETS sample essays, and the PERSUADE/ASAP rubric for 12 PERSUADE 2.0 essays. On ETS essays, Flash achieved 67% exact score agreement with expert raters (4 of 6); Pro achieved 33% (2 of 6). On PERSUADE essays, Pro matched human scores exactly on 3 of 12 essays (25%); Flash on 5 of 12 (42%). A contamination test reveals a score memorisation signal: when asked to recall scores without seeing the rubric, both models matched ETS scores at 67% (4 of 6) but PERSUADE scores at only 33% (Pro) and 42% (Flash). The models did not memorise the essay text itself, but they recalled the published scores. This suggests that assessment accuracy on well-known corpora may be inflated by score memorisation, and that contamination testing should be standard practice in AI assessment research.</p>
       </div>
     </div>
 
@@ -65,8 +65,8 @@
             <div class="metric-label">ETS score recall (both models)</div>
           </div>
           <div class="metric-card">
-            <div class="metric-value">~25pp</div>
-            <div class="metric-label">Contamination gap</div>
+            <div class="metric-value">25–33pp</div>
+            <div class="metric-label">Contamination gap (Flash / Pro)</div>
           </div>
         </div>
       </div>
@@ -77,7 +77,7 @@
       <div class="container">
         <div class="reading-guide">
           <h3>How to read this report</h3>
-          <p>This report follows a standard research paper structure. Start with the Introduction for context, or skip to Results for the data. The Discussion section addresses what we can and cannot claim from a small proof-of-concept study.</p>
+          <p>This report follows a standard research paper structure. Start with the Introduction for context, or skip to Results for the data. The Discussion section addresses what we can and cannot claim from a small study.</p>
           <p>This report is a frozen snapshot of the March 2026 data. For the full list of AlignED reports, visit <a href="https://trgallagher-research.github.io/AlignED-research-reports/">AlignED Reports</a>.</p>
         </div>
 

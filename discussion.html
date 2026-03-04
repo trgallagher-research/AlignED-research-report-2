@@ -62,8 +62,8 @@
           <p>Score recall is a practical contamination test. It requires no access to training data, no access to model weights, and produces an interpretable signal. Any researcher can run it.</p>
 
           <h3>2. The gap suggests inflated accuracy on known corpora</h3>
-          <p>On ETS essays, both models achieved 100% within-one scoring accuracy when given the rubric. On PERSUADE essays, accuracy dropped. This is partly expected: different corpora, different prompts, different student populations. But the score recall test offers a cleaner comparison, because it removes the rubric from the equation entirely.</p>
-          <p>The fact that models can recall ETS scores without the rubric suggests that at least some of the scoring accuracy on ETS essays may come from memorisation rather than rubric application. We cannot quantify how much, but the signal is present.</p>
+          <p>Because the two corpora use different rubrics, raw scoring accuracy cannot be compared directly between them. The score recall test avoids this problem: it removes the rubric entirely and asks whether the model can guess the published score from the essay alone.</p>
+          <p>The fact that models recalled ETS scores at a higher rate than PERSUADE scores (without any rubric) suggests that at least some of the scoring accuracy on ETS essays may come from memorisation rather than rubric application. We cannot quantify how much, but the signal is present.</p>
 
           <h3>3. Assessment capability may exist but is hard to separate from memorisation</h3>
           <p>Both models produced detailed, rubric-aligned feedback with specific textual references. They identified genuine strengths and weaknesses in student writing. The next-step learning tasks were concrete and targeted. This suggests real assessment capability beyond simple score retrieval.</p>
@@ -75,7 +75,7 @@
             <li><strong>Small samples.</strong> Six ETS essays and twelve PERSUADE essays. The score recall gap is consistent across both models, but the sample sizes are too small for statistical significance testing.</li>
             <li><strong>PERSUADE is not provably uncontaminated.</strong> The PERSUADE 2.0 corpus is publicly available. We assume lower contamination risk because it is less widely reproduced than ETS samples, but we cannot confirm it is absent from training data.</li>
             <li><strong>Single genre.</strong> All essays are argumentative/persuasive writing. The contamination effect may differ for narrative, expository, or other genres.</li>
-            <li><strong>No rubric variation.</strong> We used the same ETS rubric for both corpora. Testing with alternative rubrics would help isolate whether models apply the given rubric or default to memorised scoring patterns.</li>
+            <li><strong>No rubric variation.</strong> Each corpus was scored with its own rubric. Testing with alternative or mismatched rubrics would help isolate whether models apply the given rubric or default to memorised scoring patterns.</li>
             <li><strong>Single run.</strong> Temperature was set to 0 for reproducibility, so each essay was scored once per model. We did not test robustness across multiple runs or temperature settings.</li>
           </ul>
 

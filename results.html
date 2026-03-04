@@ -51,13 +51,13 @@
             <li><a href="#persuade-scoring">PERSUADE scoring accuracy</a></li>
             <li><a href="#contamination">The contamination signal</a></li>
             <li><a href="#verbatim">Verbatim recall</a></li>
-            <li><a href="#feedback">Feedback quality</a></li>
+            <li><a href="#feedback">Feedback samples</a></li>
           </ul>
         </div>
 
         <!-- Note Box -->
         <div class="note">
-          <strong>Sample sizes.</strong> The ETS corpus contains 6 essays and the PERSUADE corpus contains 12. These are small samples. The patterns described below are consistent with a contamination effect but should be interpreted as proof-of-concept findings, not definitive conclusions.
+          <strong>Sample sizes.</strong> The ETS corpus contains 6 essays and the PERSUADE corpus contains 12. These are small samples. The patterns described below are consistent with a contamination effect but should not be treated as definitive conclusions.
         </div>
 
         <!-- ETS Scoring -->
@@ -140,7 +140,7 @@
         </div>
 
         <div class="prose">
-          <p>Neither model could reproduce ETS essay text. When given the first sentence and asked to continue, both models produced low-similarity text (average cosine similarity &lt; 0.04). Both models <em>recognised</em> the essays as known ETS samples and stated this explicitly, but could not reproduce the actual text.</p>
+          <p>Neither model could reproduce ETS essay text. When given the first sentence and asked to continue, both models produced low-similarity text (average similarity &lt; 0.04, where 0.5 or above would indicate substantial memorisation). Both models <em>recognised</em> the essays as known ETS samples and stated this explicitly, but could not reproduce the actual text.</p>
 
           <table>
             <thead>
@@ -167,18 +167,17 @@
             </tbody>
           </table>
 
-          <p>This result is noteworthy: the models <em>know about</em> these essays (they identify them as ETS samples) and recall their scores, but cannot reproduce the text itself. Score memorisation and text memorisation appear to be separate phenomena.</p>
+          <p>Both models <em>recognised</em> the ETS essays as known samples and identified them by name, but could not reproduce the text. They recalled the published scores but not the words. Score memorisation and text memorisation appear to be separate phenomena.</p>
         </div>
 
         <!-- Feedback Quality -->
         <div class="section-divider" id="feedback">
-          <h2>Feedback quality</h2>
-          <p>A brief qualitative observation</p>
+          <h2>Feedback samples</h2>
+          <p>Selected examples for independent evaluation</p>
         </div>
 
         <div class="prose">
-          <p>Both models produced detailed, rubric-aligned feedback with specific textual references. Strengths and areas for improvement were distinct and non-generic. Next-step learning tasks were concrete and targeted the student's most pressing skill gap.</p>
-          <p>A systematic evaluation of feedback quality was not part of this study. The <a href="appendices.html#feedback-samples">Appendices</a> include three full feedback examples (score levels 1, 3, and 6) for readers to evaluate independently.</p>
+          <p>A systematic evaluation of feedback quality was not part of this study. The <a href="appendices.html#feedback-samples">Appendices</a> include three full feedback examples (score levels 1, 3, and 6) for readers to evaluate independently. Both models produced structured feedback with specific textual references, and the next-step learning tasks targeted identifiable skill gaps. Whether this reflects genuine assessment capability or patterns associated with memorised score levels cannot be determined from this data.</p>
 
           <div class="note">
             <strong>Feedback and contamination.</strong> Even if scoring accuracy is inflated by score memorisation, the feedback itself may still be valuable. Feedback quality is a separate question from scoring accuracy. This study did not test whether feedback is influenced by contamination.

@@ -61,13 +61,15 @@
           </ul>
           <p>Score recall is the more concerning form for assessment research. A model that cannot reproduce an essay but can recall its published score will appear to be a competent assessor when tested on that essay.</p>
 
+          <p>In measurement theory, this is a threat to construct validity (Messick, 1989). A valid assessment score should reflect the construct it claims to measure: in this case, the ability to apply a rubric to student writing. If the score instead reflects a memorised association between an essay and its published rating, it measures something else entirely. Score memorisation is a form of construct-irrelevant variance that inflates observed agreement between model and human scores without reflecting genuine assessment capability.</p>
+
           <h2>What this report tests</h2>
           <p>We tested two Gemini models on two corpora:</p>
           <ul>
             <li><strong>ETS sample essays (6 essays):</strong> Published by ETS with scores and commentary. High contamination risk.</li>
             <li><strong>PERSUADE 2.0 essays (12 essays):</strong> From a research corpus published in 2024 by Crossley et al. Lower contamination risk, though not provably absent from training data.</li>
           </ul>
-          <p>Both corpora were scored using the same 6-point rubric. If model accuracy is driven by genuine assessment capability, performance should be similar across corpora. If accuracy is inflated by score memorisation, performance should be higher on the corpus with greater contamination risk.</p>
+          <p>Each corpus was scored using a rubric matched to its genre: the ETS rubric for ETS essays and the PERSUADE/ASAP rubric for PERSUADE essays. Because the rubrics differ, raw scoring accuracy cannot be directly compared across corpora. The contamination comparison instead relies on a score recall test that does not involve the rubric at all. If models recall published scores at a higher rate for the likely-contaminated corpus, this is consistent with score memorisation.</p>
           <p>We also ran two contamination tests: a verbatim recall test (can the model reproduce the essay text?) and a score recall test (can the model guess the published score without the rubric?).</p>
 
           <div class="note">
