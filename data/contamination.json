@@ -63,6 +63,6 @@
       "total_essays": 6,
       "verdict": "No verbatim memorisation detected"
     },
-    "note": "Both models recognised the ETS essays as known training data but could not reproduce the text verbatim. Average cosine similarity < 0.04."
+    "note": "Both models recognised the ETS essays as known training data but could not reproduce the text verbatim. Average sequence similarity < 0.04."
   }
 }

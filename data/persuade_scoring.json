@@ -3,7 +3,7 @@
     "corpus": "PERSUADE 2.0",
     "total_essays": 12,
     "score_range": "1-6",
-    "rubric": "ETS GRE Analytical Writing 6-point holistic (applied to PERSUADE essays)"
+    "rubric": "PERSUADE/ASAP 6-point holistic"
   },
   "essays": [
     { "id": "persuade_score1_a", "human_score": 1, "pro_score": 2, "flash_score": 1 },
